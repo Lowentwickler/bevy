@@ -105,7 +105,9 @@ unsafe impl Byteable for Vec2 {}
 // uniform buffer objects pad Vec3s to be 16 bytes.
 unsafe impl Byteable for Vec3 {}
 unsafe impl Byteable for Vec4 {}
+unsafe impl Byteable for Mat4 {}
 
+/*
 impl Bytes for Mat4 {
     fn write_bytes(&self, buffer: &mut [u8]) {
         let array = self.to_cols_array();
@@ -123,6 +125,7 @@ impl FromBytes for Mat4 {
         Mat4::from_cols_array(&array)
     }
 }
+*/
 
 impl<T> Bytes for Option<T>
 where

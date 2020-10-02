@@ -123,6 +123,10 @@ name = "parenting"
 path = "examples/3d/parenting.rs"
 
 [[example]]
+name = "skeletal_animation"
+path = "examples/3d/skeletal_animation.rs"
+
+[[example]]
 name = "3d_scene"
 path = "examples/3d/3d_scene.rs"
 
