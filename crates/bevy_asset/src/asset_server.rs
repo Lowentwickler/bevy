@@ -9,6 +9,7 @@ use bevy_utils::{HashMap, HashSet};
 use crossbeam_channel::TryRecvError;
 use parking_lot::RwLock;
 use std::{
+    any::TypeId,
     fs, io,
     path::{Path, PathBuf},
     sync::Arc,
@@ -70,7 +71,8 @@ pub struct AssetServer {
     loaders: Vec<Resources>,
     task_pool: TaskPool,
     extension_to_handler_index: HashMap<String, usize>,
-    extension_to_loader_index: HashMap<String, usize>,
+    // We use a combination of typeid and extension to enable something like typed asset loading
+    extension_to_loader_index: HashMap<(TypeId, String), usize>,
     asset_info: RwLock<HashMap<HandleId, AssetInfo>>,
     asset_info_paths: RwLock<HashMap<PathBuf, HandleId>>,
     #[cfg(feature = "filesystem_watcher")]
@@ -114,8 +116,10 @@ impl AssetServer {
     {
         let loader_index = self.loaders.len();
         for extension in loader.extensions().iter() {
-            self.extension_to_loader_index
-                .insert(extension.to_string(), loader_index);
+            self.extension_to_loader_index.insert(
+                (TypeId::of::<TAsset>(), extension.to_string()),
+                loader_index,
+            );
         }
 
         let mut resources = Resources::default();

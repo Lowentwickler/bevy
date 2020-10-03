@@ -23,6 +23,7 @@ pub enum VertexAttributeValues {
     Float2(Vec<[f32; 2]>),
     Float3(Vec<[f32; 3]>),
     Float4(Vec<[f32; 4]>),
+    Uint2(Vec<[u16; 4]>),
 }
 
 impl VertexAttributeValues {
@@ -32,6 +33,7 @@ impl VertexAttributeValues {
             VertexAttributeValues::Float2(ref values) => values.len(),
             VertexAttributeValues::Float3(ref values) => values.len(),
             VertexAttributeValues::Float4(ref values) => values.len(),
+            VertexAttributeValues::Uint2(ref values) => values.len(),
         }
     }
 
@@ -46,6 +48,7 @@ impl VertexAttributeValues {
             VertexAttributeValues::Float2(values) => values.as_slice().as_bytes(),
             VertexAttributeValues::Float3(values) => values.as_slice().as_bytes(),
             VertexAttributeValues::Float4(values) => values.as_slice().as_bytes(),
+            VertexAttributeValues::Uint2(values) => values.as_slice().as_bytes(),
         }
     }
 }
@@ -57,6 +60,7 @@ impl From<&VertexAttributeValues> for VertexFormat {
             VertexAttributeValues::Float2(_) => VertexFormat::Float2,
             VertexAttributeValues::Float3(_) => VertexFormat::Float3,
             VertexAttributeValues::Float4(_) => VertexFormat::Float4,
+            VertexAttributeValues::Uint2(_) => VertexFormat::Uint2,
         }
     }
 }
@@ -71,6 +75,8 @@ impl VertexAttribute {
     pub const NORMAL: &'static str = "Vertex_Normal";
     pub const POSITION: &'static str = "Vertex_Position";
     pub const UV: &'static str = "Vertex_Uv";
+    pub const JOINTS: &'static str = "Vertex_Joints";
+    pub const WEIGHTS: &'static str = "Vertex_Weights";
 
     pub fn position(positions: Vec<[f32; 3]>) -> Self {
         VertexAttribute {
@@ -90,6 +96,20 @@ impl VertexAttribute {
         VertexAttribute {
             name: Self::UV.into(),
             values: VertexAttributeValues::Float2(uvs),
+        }
+    }
+
+    pub fn joints(joints: Vec<[u16; 4]>) -> Self {
+        VertexAttribute {
+            name: Self::JOINTS.into(),
+            values: VertexAttributeValues::Uint2(joints),
+        }
+    }
+
+    pub fn weights(weights: Vec<[f32; 4]>) -> Self {
+        VertexAttribute {
+            name: Self::WEIGHTS.into(),
+            values: VertexAttributeValues::Float4(weights),
         }
     }
 }
@@ -117,6 +137,7 @@ pub struct Mesh {
     pub primitive_topology: PrimitiveTopology,
     pub attributes: Vec<VertexAttribute>,
     pub indices: Option<Indices>,
+    pub skin: Option<Vec<Mat4>>,
 }
 
 impl Mesh {
@@ -125,6 +146,7 @@ impl Mesh {
             primitive_topology,
             attributes: Vec::new(),
             indices: None,
+            skin: None,
         }
     }
 
@@ -254,6 +276,7 @@ pub mod shape {
                     VertexAttribute::uv(uvs),
                 ],
                 indices: Some(indices),
+                skin: None,
             }
         }
     }
@@ -352,6 +375,7 @@ pub mod shape {
                     VertexAttribute::uv(uvs),
                 ],
                 indices: Some(indices),
+                skin: None,
             }
         }
     }
@@ -392,6 +416,7 @@ pub mod shape {
                     VertexAttribute::uv(uvs),
                 ],
                 indices: Some(indices),
+                skin: None,
             }
         }
     }
@@ -465,6 +490,7 @@ pub mod shape {
                     VertexAttribute::uv(uvs),
                 ],
                 indices: Some(indices),
+                skin: None,
             }
         }
     }
